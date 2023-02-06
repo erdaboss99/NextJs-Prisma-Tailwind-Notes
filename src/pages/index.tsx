@@ -57,9 +57,30 @@ const Home = ({ notes }: Notes) => {
 		}
 	}
 
+	async function updateNote(data: FormData) {
+		try {
+			fetch(`http://localhost:3000/api/note/${data.id}`, {
+				body: JSON.stringify(data),
+				headers: {
+					'Content-Type': 'application/json',
+				},
+				method: 'PUT',
+			}).then(() => {
+				setForm({ title: '', content: '', id: '' });
+				refreshData();
+			});
+		} catch (error) {
+			console.log(error);
+		}
+	}
+
 	const handleSubmit = async (data: FormData) => {
 		try {
-			create(data);
+			if (data.id) {
+				updateNote(data);
+			} else {
+				create(data);
+			}
 		} catch (error) {
 			console.log(error);
 		}
@@ -106,6 +127,11 @@ const Home = ({ notes }: Notes) => {
 									onClick={() => deleteNote(note.id)}
 									className='bg-red-500 px-3 text-white rounded'>
 									X
+								</button>
+								<button
+									onClick={() => setForm({ title: note.title, content: note.content, id: note.id })}
+									className='bg-blue-500 mr-3 px-3 text-white rounded'>
+									Update
 								</button>
 							</div>
 						</li>
