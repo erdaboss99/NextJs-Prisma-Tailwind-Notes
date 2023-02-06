@@ -25,9 +25,9 @@ const Home = ({ notes }: Notes) => {
 		router.replace(router.asPath);
 	};
 
-	async function create(data: FormData) {
+	async function createNote(data: FormData) {
 		try {
-			fetch('http://localhost:3000/api/create', {
+			fetch(`http://localhost:3000/api/create`, {
 				body: JSON.stringify(data),
 				headers: {
 					'Content-Type': 'application/json',
@@ -79,7 +79,7 @@ const Home = ({ notes }: Notes) => {
 			if (data.id) {
 				updateNote(data);
 			} else {
-				create(data);
+				createNote(data);
 			}
 		} catch (error) {
 			console.log(error);
@@ -88,55 +88,61 @@ const Home = ({ notes }: Notes) => {
 
 	return (
 		<>
-			<h1 className='text-center font-bold text-5xl mt-4'>Notes</h1>
-			<form
-				onSubmit={(e) => {
-					e.preventDefault();
-					handleSubmit(form);
-				}}
-				className='w-auto min-w-[25%] max-w-min mx-auto space-y-6 flex flex-col items-stretch'>
-				<input
-					type='text'
-					placeholder='Title'
-					value={form.title}
-					onChange={(e) => setForm({ ...form, title: e.target.value })}
-					className='border-2 rounded border-gray-600 p-1'
-				/>
+			<h1 className='text-center font-bold text-5xl mt-4 mb-2'>Notes</h1>
+			<div className='w-auto min-w-[50%] max-w-min mx-auto'>
+				<form
+					onSubmit={(e) => {
+						e.preventDefault();
+						handleSubmit(form);
+					}}
+					className='space-y-6 flex flex-col items-stretch'>
+					<input
+						type='text'
+						placeholder='Title'
+						value={form.title}
+						onChange={(e) => setForm({ ...form, title: e.target.value })}
+						className='border-2 rounded border-gray-600 p-1'
+					/>
 
-				<textarea
-					placeholder='Content'
-					value={form.content}
-					onChange={(e) => setForm({ ...form, content: e.target.value })}
-					className='border-2 rounded border-gray-600 p-1'
-				/>
+					<textarea
+						placeholder='Content'
+						value={form.content}
+						onChange={(e) => setForm({ ...form, content: e.target.value })}
+						className='border-2 rounded border-gray-600 p-1'
+					/>
 
-				<button type='submit' className='bg-blue-500 text-white rounded p-1'>
-					Add +
-				</button>
-			</form>
-			<div className='w-auto min-w-[25%] max-w-min mt-20 mx-auto space-y-6 flex flex-col items-stretch'>
-				<ul>
-					{notes.map((note) => (
-						<li key={note.id} className='border-b border-gray-600 p-2'>
-							<div className='flex justify-between'>
-								<div className='flex-1'>
-									<h3 className='font-bold'>{note.title}</h3>
-									<p className='text-sm'>{note.content}</p>
+					<button
+						type='submit'
+						className='bg-blue-500 text-white rounded p-1 min-w-[50%] max-w-min mx-auto'>
+						Add or Update
+					</button>
+				</form>
+				<div className='mt-20 space-y-6 flex flex-col items-stretch'>
+					<ul>
+						{notes.map((note) => (
+							<li key={note.id} className='border-b border-gray-600 p-2'>
+								<div className='flex justify-between'>
+									<div className='flex-1'>
+										<h3 className='font-bold'>{note.title}</h3>
+										<p className='text-sm'>{note.content}</p>
+									</div>
+									<button
+										onClick={() =>
+											setForm({ title: note.title, content: note.content, id: note.id })
+										}
+										className='bg-blue-500 mr-3 px-3 text-white rounded'>
+										Update
+									</button>
+									<button
+										onClick={() => deleteNote(note.id)}
+										className='bg-red-500 px-3 text-white rounded'>
+										X
+									</button>
 								</div>
-								<button
-									onClick={() => deleteNote(note.id)}
-									className='bg-red-500 px-3 text-white rounded'>
-									X
-								</button>
-								<button
-									onClick={() => setForm({ title: note.title, content: note.content, id: note.id })}
-									className='bg-blue-500 mr-3 px-3 text-white rounded'>
-									Update
-								</button>
-							</div>
-						</li>
-					))}
-				</ul>
+							</li>
+						))}
+					</ul>
+				</div>
 			</div>
 		</>
 	);
